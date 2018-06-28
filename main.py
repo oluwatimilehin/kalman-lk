@@ -15,9 +15,6 @@ def run(source):
     cv2.destroyWindow('Image')
 
 
-
-
-
 if __name__ == '__main__':
     source = 'three-four.mp4'
     run(source)

@@ -1,6 +1,9 @@
 import numpy as np
 import cv2
 import get_points
+from collections import namedtuple
+
+Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 def run(source):
     cap = cv2.VideoCapture(source)
@@ -15,7 +18,7 @@ def run(source):
     cv2.destroyWindow('Image')
 
     points = get_points.run(img)
-
+    rect = Rect(points[0][0], points[0][1], points[0][2], points[0, 3])
     if not points:
         print("ERROR: No object to be tracked.")
         exit()
@@ -23,6 +26,7 @@ def run(source):
     cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
     cv2.imshow("Image", img)
 
+    prev_image = cap.read()
 
     while True:
         # Read frame from device or file
@@ -30,6 +34,8 @@ def run(source):
         if not retval:
             print("Cannot capture frame device | CODE TERMINATING :(")
             exit()
+
+
         # Update the tracker
         # tracker.update(img)
         # Get the position of the object, draw a
@@ -38,12 +44,9 @@ def run(source):
         # pt1 = (int(rect.left()), int(rect.top()))
         # pt2 = (int(rect.right()), int(rect.bottom()))
         # cv2.rectangle(img, pt1, pt2, (255, 255, 255), 3)
-        cv2.rectangle(img, (points[0][0], points[0][1]), (points[0][2], points[0][3]), (255, 255, 255), 3)
+        cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y))
         # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )
-        # if dispLoc:
-        #     loc = (int(rect.left()), int(rect.top() - 20))
-        #     txt = "Object tracked at [{}, {}]".format(pt1, pt2)
-        #     cv2.putText(img, txt, loc, cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 255, 255), 1)
+
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)
         # Continue until the user presses ESC key

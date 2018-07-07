@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
+from scipy import signal
 from scipy.ndimage import filters
+from main import Rect
+import math
 
 
 def harris(im, sigma=3):
@@ -60,18 +63,98 @@ def get_harris_points(harris_im, min_distance=10, threshold=0.1):
     return accepted_cords
 
 
-img = cv2.imread('tundegray.png')  # np.random.randint(43, size=(3, 6))  # 6 columns, 3 rows.
-img_2d = img[:, :, 0]  # remove the last dimension
-harris_result = harris(img_2d)
-good_corners = (get_harris_points(harris_result))
+# This is the method that implements the Lucas Kanade algorithm
+def calc_optical_flow(im1, im2, corners: list, win=5):
+    assert im1.shape == im2.shape
 
-for cords in good_corners:
-    img[cords[0] : cords[0], cords[1]: cords[1]] = [0, 0, 255]
+    x_kernel = np.array([[-1., 1.], [-1., 1.]])
+    y_kernel = np.array([[-1., -1.], [1., 1.]])
+    t_kernel = np.array([[1., 1.], [1., 1.]])
 
-cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
-cv2.imshow('frame', img)
+    win_size = math.floor(win / 2)
 
-k = cv2.waitKey(0) & 0xFF
+    # Implement Lucas Kanade
+    # for each point, calculate I_x, I_y, I_t
+    mode = 'same'  # This ensures that the convolution returns the same shape as the images
+    boundary = 'symm'
+    dx = signal.convolve2d(im1, x_kernel, boundary=boundary, mode=mode)
+    dy = signal.convolve2d(im1, y_kernel, boundary=boundary, mode=mode)
+    dt = signal.convolve2d(im2, t_kernel, boundary=boundary, mode=mode) + signal.convolve2d(im1, -t_kernel,
+                                                                                            boundary=boundary,
+                                                                                            mode=mode)
+    u = np.zeros(len(corners))
+    v = np.zeros(len(corners))
+    # within window window_size * window_size
 
-if k == 27:
-    cv2.destroyAllWindows()
+    for index, k in enumerate(corners):
+        x = k[0]
+        y = k[1]
+
+        ix = dx[x - win_size: x + win_size, y - win_size: y + win_size + 1].flatten()
+        iy = dy[x - win_size: x + win_size, y - win_size: y + win_size + 1].flatten()
+        it = dy[x - win_size: x + win_size, y - win_size: y + win_size + 1].flatten()
+
+        b = np.reshape(it, (it.shape[0], 1))  # get b here. Make b a column vector.
+        a = np.vstack((ix, iy)).T  # get A here. Combine ix and iy into a matrix and transpose them.
+        nu = np.matmul(np.linalg.pinv(a), b)  # get velocity here
+
+        u[index] = nu[0]
+        v[index] = nu[1]
+
+    return u, v
+
+
+def run(rect: Rect, im1, im2):
+    im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x, 0]  # use the rows and the column specified
+    im1_2d = im1[:, :, 0]
+    im2_2d = im2[:, :, 0]
+    harris_result = harris(im1_corners)
+    good_corners = (get_harris_points(harris_result))
+
+    # This fits the corners in the context of the whole image
+    scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
+
+    u, v = calc_optical_flow(im1_2d, im2_2d, scaled_corners)
+    max_u = math.floor(max(u, key=abs))
+    max_v = math.floor(max(v, key=abs))
+
+
+    cv2.rectangle(im1, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 255, 0), 3)
+    cv2.rectangle(im2, (rect.top_x + max_v, rect.top_y + max_u), (rect.bottom_x + max_v, rect.bottom_y + max_u), (0, 255, 0), 3)
+
+    cv2.namedWindow('frame1', cv2.WINDOW_NORMAL)
+    cv2.namedWindow('frame2', cv2.WINDOW_NORMAL)
+    cv2.imshow('frame1', im1)
+    cv2.imshow('frame2', im2)
+
+    k = cv2.waitKey(0) & 0xFF
+
+    if k == 27:
+        cv2.destroyAllWindows()
+
+
+im1 = cv2.imread('1.jpg')
+im2 = cv2.imread('2.jpg')
+
+rect = Rect(470, 128, 900, 550)
+
+run(rect, im1, im2)
+
+#
+# # Test code
+# img = cv2.imread('1.jpg')  # np.random.randint(43, size=(3, 6))  #  5 rows, 7 columns.
+# img_2d = img[128: 550, 470:900, 0]  # remove the last dimension.img[rows, columns]
+# harris_result = harris(img_2d)
+# good_corners = (get_harris_points(harris_result))
+#
+# for cords in good_corners:
+#     img[ 128 + cords[0]: 128 + cords[0] + 3,470+ cords[1]: 470 + cords[1] + 3] = [0, 0, 255]
+#
+# cv2.rectangle(img,(470,128) , (900, 550),(0,255,0),3) # (x- axis, y- axis)
+# cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
+# cv2.imshow('frame', img)
+#
+# k = cv2.waitKey(0) & 0xFF
+#
+# if k == 27:
+#     cv2.destroyAllWindows()

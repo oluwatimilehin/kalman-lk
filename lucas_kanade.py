@@ -39,6 +39,7 @@ def get_harris_points(harris_im, min_distance=10, threshold=0.1):
 
     if not candidate_values:
         print("No good corners detected in this image. Please select another set of points.")
+    #     TODO: The Kalman filter comes in here.
 
     # These are the indices of the candidate values if it was sorted.
     index = np.argsort(candidate_values)[::-1]
@@ -115,30 +116,38 @@ def run(rect: Rect, im1, im2):
     scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
 
     u, v = calc_optical_flow(im1_2d, im2_2d, scaled_corners)
-    max_u = math.floor(max(u, key=abs))
-    max_v = math.floor(max(v, key=abs))
+
+    max_u = 0
+    max_v = 0
+
+    if u.any() and v.any():
+        max_u = math.floor(max(u, key=abs))
+        max_v = math.floor(max(v, key=abs))
+
+    new_rect = Rect(rect.top_x + max_v, rect.top_y + max_u, rect.bottom_x + max_v, rect.bottom_y + max_u)
+
+    return new_rect
+
+    # cv2.rectangle(im1, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 255, 0), 3)
+    # cv2.rectangle(im2, (new_react.top_x, new_react.top_y), (new_react.bottom_x, new_react.bottom_y), (0, 255, 0), 3)
+    #
+    # cv2.namedWindow('frame1', cv2.WINDOW_NORMAL)
+    # cv2.namedWindow('frame2', cv2.WINDOW_NORMAL)
+    # cv2.imshow('frame1', im1)
+    # cv2.imshow('frame2', im2)
+    #
+    # k = cv2.waitKey(0) & 0xFF
+    #
+    # if k == 27:
+    #     cv2.destroyAllWindows()
 
 
-    cv2.rectangle(im1, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 255, 0), 3)
-    cv2.rectangle(im2, (rect.top_x + max_v, rect.top_y + max_u), (rect.bottom_x + max_v, rect.bottom_y + max_u), (0, 255, 0), 3)
-
-    cv2.namedWindow('frame1', cv2.WINDOW_NORMAL)
-    cv2.namedWindow('frame2', cv2.WINDOW_NORMAL)
-    cv2.imshow('frame1', im1)
-    cv2.imshow('frame2', im2)
-
-    k = cv2.waitKey(0) & 0xFF
-
-    if k == 27:
-        cv2.destroyAllWindows()
-
-
-im1 = cv2.imread('1.jpg')
-im2 = cv2.imread('2.jpg')
-
-rect = Rect(470, 128, 900, 550)
-
-run(rect, im1, im2)
+# im1 = cv2.imread('1.jpg')
+# im2 = cv2.imread('2.jpg')
+#
+# rect = Rect(470, 128, 900, 550)
+#
+# run(rect, im1, im2)
 
 #
 # # Test code

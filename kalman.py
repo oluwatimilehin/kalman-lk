@@ -5,9 +5,9 @@ from scipy.linalg import inv
 
 
 class Kalman(object):
-    def __init__(self, rect: Rect, dt=1):
-        self.x = np.array([rect.top_x, 0.1, rect.top_y, 0.1]).T
-        self.P = np.diag([0.5, 0.001, 0.5, 0.001])
+    def __init__(self, rect: Rect, measured, dt=0.1):
+        self.x = np.array([rect.top_x, measured[0], rect.top_y, measured[1]]).T
+        self.P = np.diag([0.02, 0.02, 0.02, 0.02])
         self.Q = np.array([[0, 0.001, 0, 0],
                            [0.001, 0.001, 0, 0],
                            [0, 0, 0, 0.0001],

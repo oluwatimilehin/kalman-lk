@@ -14,7 +14,7 @@ class LucasKanade:
         self.u = 0
         self.v = 0
 
-    def harris(self,im, sigma=3):
+    def harris(self, im, sigma=3):
         # derivatives
         imx = np.zeros(im.shape)
         filters.gaussian_filter(im, (sigma, sigma), (0, 1), output=imx)
@@ -70,7 +70,6 @@ class LucasKanade:
 
         return accepted_cords
 
-
     # This is the method that implements the Lucas Kanade algorithm
     def calc_optical_flow(self, im1, im2, corners: list, win=5):
         assert im1.shape == im2.shape
@@ -104,8 +103,9 @@ class LucasKanade:
 
             b = np.reshape(it, (it.shape[0], 1))  # get b here. Make b a column vector.
             a = np.vstack((ix, iy)).T  # get A here. Combine ix and iy into a matrix and transpose them.
-            nu = np.matmul(np.linalg.pinv(a), b)  # get velocity here. Matrix inversion requires a square matrix but a isn't square.
-                                                  # This is why we use pinv.
+            nu = np.matmul(np.linalg.pinv(a), b)  # get velocity here. Matrix inversion requires a square matrix but
+            # a isn't square.
+            # This is why we use pinv.
 
             u[index] = nu[0]
             v[index] = nu[1]
@@ -113,7 +113,8 @@ class LucasKanade:
         return u, v
 
     def run(self, rect: Rect, im1, im2):
-        im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x, 0]  # use the rows and the column specified
+        im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x,
+                      0]  # use the rows and the column specified
         im1_2d = im1[:, :, 0]
         im2_2d = im2[:, :, 0]
         harris_result = self.harris(im1_corners)
@@ -129,4 +130,3 @@ class LucasKanade:
                 self.v = max(v, key=abs)
 
         return self.u, self.v
-

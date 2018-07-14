@@ -27,7 +27,7 @@ def run(img):
             cv2.rectangle(img_copy, points_1[0], (x,y), (255, 255, 255), 3)
             cv2.imshow(window_name, img_copy)
 
-    print("Press and release mouse around the object to be tracked. \n You can also select multiple objects.")
+    print("Press and release mouse around the object to be tracked.")
     cv2.setMouseCallback(window_name, callback)
 
     while True:

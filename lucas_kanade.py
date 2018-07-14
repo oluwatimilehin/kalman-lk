@@ -3,7 +3,8 @@ import numpy as np
 from scipy import signal
 from scipy.ndimage import filters
 from main import Rect
-import math
+import math, collections
+
 
 
 def harris(im, sigma=3):
@@ -39,7 +40,7 @@ def get_harris_points(harris_im, min_distance=10, threshold=0.1):
 
     if not candidate_values:
         print("No good corners detected in this image. Please select another set of points.")
-    #     TODO: The Kalman filter comes in here.
+        return
 
     # These are the indices of the candidate values if it was sorted.
     index = np.argsort(candidate_values)[::-1]
@@ -97,12 +98,16 @@ def calc_optical_flow(im1, im2, corners: list, win=5):
 
         b = np.reshape(it, (it.shape[0], 1))  # get b here. Make b a column vector.
         a = np.vstack((ix, iy)).T  # get A here. Combine ix and iy into a matrix and transpose them.
-        nu = np.matmul(np.linalg.pinv(a), b)  # get velocity here
+        nu = np.matmul(np.linalg.pinv(a), b)  # get velocity here. Matrix inversion requires a square matrix but a isn't square.
+                                              # This is why we use pinv.
 
         u[index] = nu[0]
         v[index] = nu[1]
 
     return u, v
+
+
+measured_u, measured_v = 0, 0
 
 
 def run(rect: Rect, im1, im2):
@@ -112,8 +117,13 @@ def run(rect: Rect, im1, im2):
     harris_result = harris(im1_corners)
     good_corners = (get_harris_points(harris_result))
 
+    # TODO: Add condition for if there are no corners
+
     # This fits the corners in the context of the whole image
-    scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
+    scaled_corners = []
+
+    if isinstance(good_corners, collections.Iterable):
+        scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
 
     u, v = calc_optical_flow(im1_2d, im2_2d, scaled_corners)
 
@@ -121,10 +131,11 @@ def run(rect: Rect, im1, im2):
     max_v = 0
 
     if u.any() and v.any():
-        max_u = math.floor(max(u, key=abs))
-        max_v = math.floor(max(v, key=abs))
+        max_u = math.floor(max(u, key=abs) * 0.1)
+        max_v = math.floor(max(v, key=abs) * 0.1)
 
     new_rect = Rect(rect.top_x + max_v, rect.top_y + max_u, rect.bottom_x + max_v, rect.bottom_y + max_u)
+
 
     return new_rect
 

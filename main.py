@@ -44,7 +44,7 @@ def run(source):
         # pt2 = (int(rect.right()), int(rect.bottom()))
         # cv2.rectangle(img, pt1, pt2, (255, 255, 255), 3)
         cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (255, 255, 255), 3)
-        # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )
+        # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
 
         prev_image = img
 

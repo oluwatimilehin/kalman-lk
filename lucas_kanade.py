@@ -3,11 +3,13 @@ import numpy as np
 from scipy import signal
 from scipy.ndimage import filters
 from main import Rect
-import math, collections
+import math
+import collections
+
+class Lucas:
 
 
-
-def harris(im, sigma=3):
+def harris (im, sigma=3):
     # derivatives
     imx = np.zeros(im.shape)
     filters.gaussian_filter(im, (sigma, sigma), (0, 1), output=imx)
@@ -136,45 +138,5 @@ def run(rect: Rect, im1, im2):
 
     new_rect = Rect(rect.top_x + max_v, rect.top_y + max_u, rect.bottom_x + max_v, rect.bottom_y + max_u)
 
-
     return new_rect
 
-    # cv2.rectangle(im1, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 255, 0), 3)
-    # cv2.rectangle(im2, (new_react.top_x, new_react.top_y), (new_react.bottom_x, new_react.bottom_y), (0, 255, 0), 3)
-    #
-    # cv2.namedWindow('frame1', cv2.WINDOW_NORMAL)
-    # cv2.namedWindow('frame2', cv2.WINDOW_NORMAL)
-    # cv2.imshow('frame1', im1)
-    # cv2.imshow('frame2', im2)
-    #
-    # k = cv2.waitKey(0) & 0xFF
-    #
-    # if k == 27:
-    #     cv2.destroyAllWindows()
-
-
-# im1 = cv2.imread('1.jpg')
-# im2 = cv2.imread('2.jpg')
-#
-# rect = Rect(470, 128, 900, 550)
-#
-# run(rect, im1, im2)
-
-#
-# # Test code
-# img = cv2.imread('1.jpg')  # np.random.randint(43, size=(3, 6))  #  5 rows, 7 columns.
-# img_2d = img[128: 550, 470:900, 0]  # remove the last dimension.img[rows, columns]
-# harris_result = harris(img_2d)
-# good_corners = (get_harris_points(harris_result))
-#
-# for cords in good_corners:
-#     img[ 128 + cords[0]: 128 + cords[0] + 3,470+ cords[1]: 470 + cords[1] + 3] = [0, 0, 255]
-#
-# cv2.rectangle(img,(470,128) , (900, 550),(0,255,0),3) # (x- axis, y- axis)
-# cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
-# cv2.imshow('frame', img)
-#
-# k = cv2.waitKey(0) & 0xFF
-#
-# if k == 27:
-#     cv2.destroyAllWindows()

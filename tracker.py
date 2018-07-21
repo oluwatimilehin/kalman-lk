@@ -23,6 +23,7 @@ class Tracker:
         self.measure()
         self.kalman = kalman.Kalman(self.rect, self.measured)
 
+
     def measure(self):
         u, v = self.lk.run(self.rect, self.im1, self.im2)
         self.measured = np.array([u, v]).T

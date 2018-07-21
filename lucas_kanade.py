@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from scipy import signal
 from scipy.ndimage import filters
-from main import Rect
+# from main import Rect
 import math, collections
 
 
@@ -27,7 +27,7 @@ def harris(im, sigma=3):
     return Wdet - Wtr
 
 
-def get_harris_points(harris_im, min_distance=10, threshold=0.1):
+def get_harris_points(harris_im, min_distance=10, threshold=0.5):
     corner_threshold = harris_im.max() * threshold
     harrisim_t = (harris_im > corner_threshold) * 1
 
@@ -110,34 +110,33 @@ def calc_optical_flow(im1, im2, corners: list, win=5):
 measured_u, measured_v = 0, 0
 
 
-def run(rect: Rect, im1, im2):
-    im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x, 0]  # use the rows and the column specified
-    im1_2d = im1[:, :, 0]
-    im2_2d = im2[:, :, 0]
-    harris_result = harris(im1_corners)
-    good_corners = (get_harris_points(harris_result))
-
-    # TODO: Add condition for if there are no corners
-
-    # This fits the corners in the context of the whole image
-    scaled_corners = []
-
-    if isinstance(good_corners, collections.Iterable):
-        scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
-
-    u, v = calc_optical_flow(im1_2d, im2_2d, scaled_corners)
-
-    max_u = 0
-    max_v = 0
-
-    if u.any() and v.any():
-        max_u = math.floor(max(u, key=abs) * 0.1)
-        max_v = math.floor(max(v, key=abs) * 0.1)
-
-    new_rect = Rect(rect.top_x + max_v, rect.top_y + max_u, rect.bottom_x + max_v, rect.bottom_y + max_u)
-
-
-    return new_rect
+# def run(rect: Rect, im1, im2):
+#     im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x, 0]  # use the rows and the column specified
+#     im1_2d = im1[:, :, 0]
+#     im2_2d = im2[:, :, 0]
+#     harris_result = harris(im1_corners)
+#     good_corners = (get_harris_points(harris_result))
+#
+#     # TODO: Add condition for if there are no corners
+#
+#     # This fits the corners in the context of the whole image
+#     scaled_corners = []
+#
+#     if isinstance(good_corners, collections.Iterable):
+#         scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
+#
+#     u, v = calc_optical_flow(im1_2d, im2_2d, scaled_corners)
+#
+#     max_u = 0
+#     max_v = 0
+#
+#     if u.any() and v.any():
+#         max_u = math.floor(max(u, key=abs) * 0.1)
+#         max_v = math.floor(max(v, key=abs) * 0.1)
+#
+#     new_rect = Rect(rect.top_x + max_v, rect.top_y + max_u, rect.bottom_x + max_v, rect.bottom_y + max_u)
+#
+#     return new_rect
 
     # cv2.rectangle(im1, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 255, 0), 3)
     # cv2.rectangle(im2, (new_react.top_x, new_react.top_y), (new_react.bottom_x, new_react.bottom_y), (0, 255, 0), 3)
@@ -152,7 +151,7 @@ def run(rect: Rect, im1, im2):
     # if k == 27:
     #     cv2.destroyAllWindows()
 
-
+#
 # im1 = cv2.imread('1.jpg')
 # im2 = cv2.imread('2.jpg')
 #
@@ -160,21 +159,21 @@ def run(rect: Rect, im1, im2):
 #
 # run(rect, im1, im2)
 
-#
-# # Test code
-# img = cv2.imread('1.jpg')  # np.random.randint(43, size=(3, 6))  #  5 rows, 7 columns.
-# img_2d = img[128: 550, 470:900, 0]  # remove the last dimension.img[rows, columns]
-# harris_result = harris(img_2d)
-# good_corners = (get_harris_points(harris_result))
-#
-# for cords in good_corners:
-#     img[ 128 + cords[0]: 128 + cords[0] + 3,470+ cords[1]: 470 + cords[1] + 3] = [0, 0, 255]
-#
-# cv2.rectangle(img,(470,128) , (900, 550),(0,255,0),3) # (x- axis, y- axis)
-# cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
-# cv2.imshow('frame', img)
-#
-# k = cv2.waitKey(0) & 0xFF
-#
-# if k == 27:
-#     cv2.destroyAllWindows()
+
+# Test code
+img = cv2.imread('chessboard.jpg')  # np.random.randint(43, size=(3, 6))  #  5 rows, 7 columns.
+img_2d = img[128: 550, 470:900, 0]  # remove the last dimension.img[rows, columns]
+harris_result = harris(img_2d)
+good_corners = (get_harris_points(harris_result))
+
+for cords in good_corners:
+    img[127 + cords[0]: 127 + cords[0] + 7, 469 + cords[1]: 469 + cords[1] + 7] = [0, 0, 255]
+
+cv2.rectangle(img,(470,128) , (900, 550),(255,255,0),3) # (x- axis, y- axis)
+cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
+cv2.imshow('frame', img)
+
+k = cv2.waitKey(0) & 0xFF
+
+if k == 27:
+    cv2.destroyAllWindows()

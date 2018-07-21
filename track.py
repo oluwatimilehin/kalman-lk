@@ -28,9 +28,9 @@ class Tracker:
     def run(self):
         self.measure()
 
-        top_x = math.ceil(self.rect.top_x + self.measured[0])
-        top_y = math.ceil(self.rect.top_y + self.measured[1])
-        bottom_x = math.ceil(self.rect.bottom_x + (self.measured[0]))
-        bottom_y = math.ceil(self.rect.bottom_y + (self.measured[1]))
+        top_x = math.ceil(self.rect.top_x + self.measured[1])
+        top_y = math.ceil(self.rect.top_y + self.measured[0])
+        bottom_x = math.ceil(self.rect.bottom_x + (self.measured[1]))
+        bottom_y = math.ceil(self.rect.bottom_y + (self.measured[0]))
 
         self.rect = Rect(top_x, top_y, bottom_x, bottom_y)

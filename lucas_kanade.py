@@ -8,10 +8,20 @@ from collections import namedtuple
 
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
+
 class LucasKanade:
     def __init__(self):
         self.u = 0
         self.v = 0
+        self.feature_params = dict(maxCorners=100,
+                              qualityLevel=0.3,
+                              minDistance=7,
+                              blockSize=7)
+
+        # Parameters for lucas kanade optical flow
+        self.lk_params = dict(winSize=(15, 15),
+                         maxLevel=2,
+                         criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
     def harris(self, im, sigma=3):
         # derivatives
@@ -32,7 +42,7 @@ class LucasKanade:
 
         return Wdet - Wtr
 
-    def get_harris_points(self, harris_im, min_distance=10, threshold=0.1):
+    def get_harris_points(self, harris_im, min_distance=7, threshold=0.1):
         corner_threshold = harris_im.max() * threshold
         harrisim_t = (harris_im > corner_threshold) * 1
 
@@ -118,15 +128,18 @@ class LucasKanade:
         im2_2d = im2[:, :, 0]
         harris_result = self.harris(im1_corners)
         good_corners = (self.get_harris_points(harris_result))
+        p0 = cv2.goodFeaturesToTrack(im1_corners, mask=None, **self.feature_params)
+
+        scaled_corners = []
 
         if isinstance(good_corners, collections.Iterable):
             scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
-
             u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
+            points = cv2.calcOpticalFlowPyrLK(im1_2d, im2_2d, p0, None, **self.lk_params)
 
             if u.any() and v.any():
-                self.u = max(u, key=abs)
-                self.v = max(v, key=abs)
+                self.u = math.floor(max(u, key=abs) * 0.1)
+                self.v = math.floor(max(v, key=abs) * 0.1)
 
         return self.u, self.v
 

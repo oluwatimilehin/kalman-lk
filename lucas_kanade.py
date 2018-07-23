@@ -33,7 +33,7 @@ class LucasKanade:
 
         return Wdet - Wtr
 
-    def get_harris_points(self, harris_im, min_distance=10, threshold=0.1):
+    def get_harris_points(self, harris_im, min_distance=10, threshold=0.5):
         corner_threshold = harris_im.max() * threshold
         harrisim_t = (harris_im > corner_threshold) * 1
 

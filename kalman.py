@@ -7,14 +7,14 @@ from scipy.linalg import inv
 class Kalman(object):
     def __init__(self, rect: Rect, measured, dt=0.1):
         self.x = np.array([rect.top_x, measured[0], rect.top_y, measured[1]]).T
-        self.P = np.diag([1, 1.4161, 1, 1.4161])
-        self.Q = np.array([[0.5, 0.5, 0, 0],
-                           [0.5, 1, 0, 0],
-                           [0, 0, 0.5, 0.5],
-                           [0, 0, 0.5, 1]])
+        self.P = np.diag([1, 3.2, 1, 3.2])
+        self.Q = np.array([[3, 0.5, 0, 0],
+                           [0.5, 3, 0, 0],
+                           [0, 0, 3, 0.5],
+                           [0, 0, 0.5, 3]])
         self.H = np.array([[0, 1, 0, 0],
                            [0, 0, 0, 1]])
-        self.R = np.diag([0.001, 0.001])
+        self.R = np.diag([0.2, 0.2])
         self.F = np.array([[1, dt, 0, 0],
                            [0, 1, 0, 0],
                            [0, 0, 1, dt],

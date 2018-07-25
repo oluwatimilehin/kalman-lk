@@ -15,14 +15,12 @@ class Tracker:
         self.lk = lucas_kanade.LucasKanade()
         self.measured = []
 
-
     def update(self, im1, im2, rect):
         self.rect = rect
         self.im1 = im1
         self.im2 = im2
         self.measure()
         self.kalman = kalman.Kalman(self.rect, self.measured)
-
 
     def measure(self):
         u, v = self.lk.run(self.rect, self.im1, self.im2)

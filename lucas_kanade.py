@@ -91,8 +91,8 @@ class LucasKanade:
                                                                                                 mode=mode)
         u = np.zeros(len(corners))
         v = np.zeros(len(corners))
-        # within window window_size * window_size
 
+        # within window window_size * window_size
         for index, k in enumerate(corners):
             x = k[0]
             y = k[1]

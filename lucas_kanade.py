@@ -134,11 +134,8 @@ class LucasKanade:
 
         if isinstance(good_corners, collections.Iterable):
             scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
-            p0_new = [[[corner[0][0] + rect.top_y, corner[0][1] + rect.top_x]] for corner in p0]
-            p0_new = np.array(p0_new, dtype='f')
             u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
-            points, status, error = cv2.calcOpticalFlowPyrLK(im1_2d, im2_2d, p0_new, None, **self.lk_params)
-            points = points[0, :, :]
+
 
             if u.any() and v.any():
                 self.u = math.floor(max(u, key=abs) * 0.1)

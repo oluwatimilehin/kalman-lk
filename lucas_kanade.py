@@ -33,7 +33,7 @@ class LucasKanade:
 
         return Wdet - Wtr
 
-    def get_harris_points(self, harris_im, min_distance=10, threshold=0.5):
+    def get_harris_points(self, harris_im, min_distance=7, threshold=0.5):
         corner_threshold = harris_im.max() * threshold
         harrisim_t = (harris_im > corner_threshold) * 1
 
@@ -126,7 +126,7 @@ class LucasKanade:
             u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
 
             if u.any() and v.any():
-                self.u = max(u, key=abs)
-                self.v = max(v, key=abs)
+                self.u = math.floor(max(u, key=abs) * 0.1)
+                self.v = math.floor(max(v, key=abs) * 0.1)
 
         return self.u, self.v

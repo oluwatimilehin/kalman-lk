@@ -127,7 +127,7 @@ class LucasKanade:
             u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
 
             if u.any() and v.any():
-                self.u = math.floor(max(u, key=abs) * 0.1)
-                self.v = math.floor(max(v, key=abs) * 0.1)
+                self.u = math.floor(max(u, key=abs))
+                self.v = math.floor(max(v, key=abs))
 
         return self.u, self.v

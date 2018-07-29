@@ -136,10 +136,9 @@ class LucasKanade:
             scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
             u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
 
-
             if u.any() and v.any():
-                self.u = math.floor(min(u, key=abs))
-                self.v = math.floor(min(v, key=abs))
+                self.u = math.floor(np.array(u).mean())
+                self.v = math.floor(np.array(v).mean())
 
         return self.u, self.v
 

@@ -138,8 +138,8 @@ class LucasKanade:
 
 
             if u.any() and v.any():
-                self.u = math.floor(max(u, key=abs))
-                self.v = math.floor(max(v, key=abs))
+                self.u = math.floor(min(u, key=abs))
+                self.v = math.floor(min(v, key=abs))
 
         return self.u, self.v
 

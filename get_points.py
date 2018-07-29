@@ -51,7 +51,7 @@ def run(img):
         elif key == ord('q'):
             # Press key `q` to quit the program
             print("Quitting without saving.")
-            exit()
+            cv2.destroyAllWindows()
         elif key == ord('d'):
             # Press ket `d` to delete the last rectangular region
             if run.mouse_down == False and points_1:

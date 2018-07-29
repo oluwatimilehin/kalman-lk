@@ -14,6 +14,7 @@ class LucasKanade:
         self.u = 0
         self.v = 0
 
+    # Compute the Harris equation results.
     def harris(self, im, sigma=3):
         # derivatives
         imx = np.zeros(im.shape)

@@ -13,15 +13,7 @@ class LucasKanade:
     def __init__(self):
         self.u = 0
         self.v = 0
-        self.feature_params = dict(maxCorners=100,
-                              qualityLevel=0.3,
-                              minDistance=7,
-                              blockSize=7)
 
-        # Parameters for lucas kanade optical flow
-        self.lk_params = dict(winSize=(15, 15),
-                         maxLevel=2,
-                         criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
     def harris(self, im, sigma=3):
         # derivatives
@@ -140,5 +132,7 @@ class LucasKanade:
                 self.u = math.floor(np.array(u).mean())
                 self.v = math.floor(np.array(v).mean())
 
-        return self.u, self.v
+        u, v = self.u, self.v
+        self.u, self.v = 0, 0
+        return u, v
 

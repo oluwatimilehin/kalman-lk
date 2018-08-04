@@ -1,11 +1,15 @@
 import numpy as np
 import cv2
 import get_points
-import lucas_kanade
 from collections import namedtuple
+<<<<<<< HEAD
 import track
+=======
+import tracker as track
+>>>>>>> kalman
 
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
+
 
 def run(source):
     cap = cv2.VideoCapture(source)
@@ -29,6 +33,10 @@ def run(source):
     cv2.imshow("Image", img)
 
     tracker = track.Tracker(rect)
+<<<<<<< HEAD
+=======
+
+>>>>>>> kalman
     prev_image = None
 
     while True:
@@ -42,8 +50,12 @@ def run(source):
             tracker.update(prev_image, img, rect)
             tracker.run()
             rect = tracker.rect
+<<<<<<< HEAD
 
         cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (255, 255, 255), 3)
+=======
+            cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (255, 255, 255), 3)
+>>>>>>> kalman
         # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
 
         prev_image = img

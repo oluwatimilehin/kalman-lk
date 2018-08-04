@@ -27,7 +27,7 @@ def run(img):
             cv2.rectangle(img_copy, points_1[0], (x,y), (255, 255, 255), 3)
             cv2.imshow(window_name, img_copy)
 
-    print("Press and release mouse around the object to be tracked. \n You can also select multiple objects.")
+    print("Press and release mouse around the object to be tracked.")
     cv2.setMouseCallback(window_name, callback)
 
     while True:
@@ -51,7 +51,7 @@ def run(img):
         elif key == ord('q'):
             # Press key `q` to quit the program
             print("Quitting without saving.")
-            exit()
+            cv2.destroyAllWindows()
         elif key == ord('d'):
             # Press ket `d` to delete the last rectangular region
             if run.mouse_down == False and points_1:

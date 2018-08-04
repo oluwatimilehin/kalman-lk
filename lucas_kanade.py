@@ -120,7 +120,6 @@ class LucasKanade:
         im2_2d = im2[:, :, 0]
         harris_result = self.harris(im1_corners)
         good_corners = (self.get_harris_points(harris_result))
-        p0 = cv2.goodFeaturesToTrack(im1_corners, mask=None, **self.feature_params)
 
         scaled_corners = []
 

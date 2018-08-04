@@ -130,4 +130,7 @@ class LucasKanade:
                 self.u = math.floor(max(u, key=abs))
                 self.v = math.floor(max(v, key=abs))
 
-        return self.u, self.v
+        u, v = self.u, self.v
+        self.u, self.v = 0, 0
+        return u, v
+

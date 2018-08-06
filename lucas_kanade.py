@@ -114,10 +114,12 @@ class LucasKanade:
         return u, v
 
     def run(self, rect: Rect, im1, im2):
+        im1_pure = im2[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x]
         im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x,
                       0]  # use the rows and the column specified
         im1_2d = im1[:, :, 0]
         im2_2d = im2[:, :, 0]
+
         harris_result = self.harris(im1_corners)
         good_corners = (self.get_harris_points(harris_result))
 

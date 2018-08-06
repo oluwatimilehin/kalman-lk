@@ -34,6 +34,7 @@ def run(source):
     while True:
         # Read frame from device or file
         retval, img = cap.read()
+
         if not retval:
             print("Cannot capture frame device | CODE TERMINATING :(")
             exit()

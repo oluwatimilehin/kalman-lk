@@ -24,6 +24,7 @@ class Tracker:
 
     def measure(self):
         u, v = self.lk.run(self.rect, self.im1, self.im2)
+
         self.measured = np.array([u, v]).T
 
     def run(self):

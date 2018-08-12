@@ -29,7 +29,6 @@ def run(source):
     cv2.imshow("Image", img)
 
     tracker = track.Tracker(rect)
-
     prev_image = None
 
     while True:
@@ -37,13 +36,16 @@ def run(source):
         retval, img = cap.read()
         if not retval:
             print("Cannot capture frame device | CODE TERMINATING :(")
-            exit()
+            cv2.destroyAllWindows()
+            break
 
         if prev_image is not None:
             tracker.update(prev_image, img, rect)
             tracker.run()
             rect = tracker.rect
+
             cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (255, 255, 255), 3)
+
         # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
 
         prev_image = img
@@ -51,7 +53,9 @@ def run(source):
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)
         # Continue until the user presses ESC key
-        if cv2.waitKey(1) == 27:
+        k = cv2.waitKey(30) & 0xff
+        if k == 27:
+            cv2.destroyAllWindows()
             break
 
 

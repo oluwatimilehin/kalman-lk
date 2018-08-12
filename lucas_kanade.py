@@ -14,7 +14,6 @@ class LucasKanade:
         self.u = 0
         self.v = 0
 
-    # Compute the Harris equation results.
     def harris(self, im, sigma=3):
         # derivatives
         imx = np.zeros(im.shape)
@@ -92,8 +91,8 @@ class LucasKanade:
                                                                                                 mode=mode)
         u = np.zeros(len(corners))
         v = np.zeros(len(corners))
-
         # within window window_size * window_size
+
         for index, k in enumerate(corners):
             x = k[0]
             y = k[1]
@@ -121,16 +120,16 @@ class LucasKanade:
         harris_result = self.harris(im1_corners)
         good_corners = (self.get_harris_points(harris_result))
 
+        scaled_corners = []
+
         if isinstance(good_corners, collections.Iterable):
             scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
-
             u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
 
             if u.any() and v.any():
-                self.u = math.floor(max(u, key=abs))
-                self.v = math.floor(max(v, key=abs))
+                self.u = math.floor(np.array(u).mean())
+                self.v = math.floor(np.array(v).mean())
 
         u, v = self.u, self.v
         self.u, self.v = 0, 0
         return u, v
-

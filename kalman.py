@@ -6,7 +6,6 @@ from scipy.linalg import inv
 
 class Kalman(object):
     def __init__(self, rect: Rect, measured, dt=0.1):
-        x_cord = (rect.top_x + rect.top_y) / 2
 
         self.x = np.array([rect.top_x, measured[0], rect.top_y, measured[1]]).T
         self.P = np.diag([1, 3.2, 1, 3.2])

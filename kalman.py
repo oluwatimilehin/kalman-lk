@@ -15,7 +15,7 @@ class Kalman(object):
                            [0, 0, 50, 0.5],
                            [0, 0, 0.5,50]])
         self.H = np.array([[1, 0, 0, 0],
-                           [0, 0, 1, 1]])
+                           [0, 0, 1, 0]])
         self.R = np.diag([0.2, 0.2])
         self.F = np.array([[1, dt, 0, 0],
                            [0, 1, 0, 0],

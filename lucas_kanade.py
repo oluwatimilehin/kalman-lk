@@ -35,6 +35,10 @@ class LucasKanade:
         return Wdet - Wtr
 
     def get_harris_points(self, harris_im, min_distance=3, threshold=0.5):
+
+        if harris_im.size == 0:
+            return "No good corners detected"
+
         corner_threshold = harris_im.max() * threshold
         harrisim_t = (harris_im > corner_threshold) * 1
 

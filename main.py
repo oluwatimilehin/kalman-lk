@@ -37,7 +37,9 @@ def run(source):
 
         if not retval:
             print("Cannot capture frame device | CODE TERMINATING :(")
-            exit()
+            cv2.destroyAllWindows()
+            break
+
 
         if prev_image is not None:
             tracker.update(prev_image, img, rect)
@@ -52,7 +54,9 @@ def run(source):
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)
         # Continue until the user presses ESC key
-        if cv2.waitKey(1) == 27:
+        k = cv2.waitKey(30) & 0xff
+        if k == 27:
+            cv2.destroyAllWindows()
             break
 
 

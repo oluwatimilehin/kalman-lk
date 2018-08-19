@@ -6,6 +6,7 @@ import math
 import collections
 from collections import namedtuple
 
+
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 

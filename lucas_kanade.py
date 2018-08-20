@@ -66,10 +66,23 @@ class LucasKanade:
         im1_2d = im1[:, :, 0]
         im2_2d = im2[:, :, 0]
 
-        harris_result = self.harris.get_harris_value(im=im1_corners)
-        good_corners = (self.harris.get_harris_points(harris_result))
+        # parameter to get features
+        feature_params = dict(maxCorners=100,
+                              qualityLevel=0.3,
+                              minDistance=7,
+                              blockSize=7)
+
+        features = cv2.goodFeaturesToTrack(im1_corners, mask=None,
+                                          **feature_params)  # using opencv function to get feature for which we are plotting flow
+        feature = np.int32(features)
+        # print(feature)
+        good_corners = np.reshape(feature, newshape=[-1, 2])
+
+        # harris_result = self.harris.get_harris_value(im=im1_corners)
+        # good_corners = (self.harris.get_harris_points(harris_result))
 
         if isinstance(good_corners, collections.Iterable):
+
             scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
             u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
 

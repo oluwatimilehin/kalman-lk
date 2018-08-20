@@ -8,9 +8,6 @@ from collections import namedtuple
 
 
 class Harris:
-    def __init__(self):
-
-
 
     @staticmethod
     def get_harris_value(im, sigma=3):

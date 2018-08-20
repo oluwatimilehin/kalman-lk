@@ -5,6 +5,7 @@ import lucas_kanade
 from collections import namedtuple
 import track
 
+
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 def run(source):
@@ -39,7 +40,6 @@ def run(source):
             print("Cannot capture frame device | CODE TERMINATING :(")
             cv2.destroyAllWindows()
             break
-
 
         if prev_image is not None:
             tracker.update(prev_image, img, rect)

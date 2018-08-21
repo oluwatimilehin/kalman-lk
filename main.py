@@ -63,5 +63,5 @@ def run(source):
 
 
 if __name__ == '__main__':
-    source = 'three-four.mp4'
+    source = 'output.mp4'
     run(source)

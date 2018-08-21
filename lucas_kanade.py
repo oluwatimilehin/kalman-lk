@@ -74,7 +74,7 @@ class LucasKanade:
         im1_pure = im2[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x]
         im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x,
                       0]  # use the rows and the column specified
-        im2_gray = cv.cvtColor(im2, cv.COLOR_BGR2GRAY)
+
         im1_2d = im1[:, :, 0]
         im2_2d = im2[:, :, 0]
 
@@ -89,11 +89,12 @@ class LucasKanade:
             self.initial_features = np.reshape(pt, (-1, 1, 2))
 
          # calculate optical flow
-        p1, st, err = cv.calcOpticalFlowPyrLK(self.initial_frame, im2_2d, self.initial_features, None, **self.lk_params)
+        p1, st, err = cv.calcOpticalFlowPyrLK(im1_2d, im2_2d, self.initial_features, None, **self.lk_params)
 
         p1 = np.reshape(p1, (-1, 1, 2))
 
         good_features = p1[st == 1]   # The shape of this thing is (x,y)
+        self.initial_features = good_features
 
         return good_features
 

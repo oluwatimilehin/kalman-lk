@@ -1,6 +1,6 @@
-import cv2
+import cv2 as cv
 import numpy as np
-from scipy.signal import convolve2d
+from scipy import signal
 from scipy.ndimage import filters
 import math
 import collections
@@ -16,46 +16,57 @@ class LucasKanade:
         self.u = 0
         self.v = 0
         self.harris = harris.Harris
+        self.initial_frame = []
+        self.initial_features =[]
+        # params for ShiTomasi corner detection
+        self.feature_params = dict(maxCorners=100,
+                              qualityLevel=0.3,
+                              minDistance=7,
+                              blockSize=7)
+        # Parameters for lucas kanade optical flow
+        self.lk_params = dict(winSize=(15, 15),
+                         maxLevel=2,
+                         criteria=(cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
 
     # This is the method that implements the Lucas Kanade algorithm
     def calc_optical_flow(self, im1, im2, corners: list, win=15):
         assert im1.shape == im2.shape
 
-        Gx = np.reshape(np.asarray([[-1, 1], [-1, 1]]), (2, 2))  # for image 1 and image 2 in x direction
-        Gy = np.reshape(np.asarray([[-1, -1], [1, 1]]), (2, 2))  # for image 1 and image 2 in y direction
-        Gt1 = np.reshape(np.asarray([[-1, -1], [-1, -1]]), (2, 2))  # for 1st image
-        Gt2 = np.reshape(np.asarray([[1, 1], [1, 1]]), (2, 2))  # for 2nd image
+        x_kernel = np.array([[-1., 1.], [-1., 1.]])
+        y_kernel = np.array([[-1., -1.], [1., 1.]])
+        t_kernel = np.array([[1., 1.], [1., 1.]])
 
-        Ix = (convolve2d(im1, Gx) + convolve2d(im2, Gx)) / 2  # smoothing in x direction
+        win_size = math.floor(win / 2)
 
-        Iy = (convolve2d(im1, Gy) + convolve2d(im2, Gy)) / 2  # smoothing in y direction
-        It1 = convolve2d(im1, Gt1) + convolve2d(im2, Gt2)  # taking difference of two images using gaussian mask of all -1 and all 1
+        # Implement Lucas Kanade
+        # for each point, calculate I_x, I_y, I_t
+        mode = 'same'  # This ensures that the convolution returns the same shape as the images
+        boundary = 'symm'
+        dx = signal.convolve2d(im1, x_kernel, boundary=boundary, mode=mode)
+        dy = signal.convolve2d(im1, y_kernel, boundary=boundary, mode=mode)
+        dt = signal.convolve2d(im2, t_kernel, boundary=boundary, mode=mode) + signal.convolve2d(im1, -t_kernel,
+                                                                                                boundary=boundary,
+                                                                                                mode=mode)
+        u = np.zeros(len(corners))
+        v = np.zeros(len(corners))
 
-        u = np.zeros(im1.shape)
-        v = np.zeros(im1.shape)
-
-        A = np.zeros((2, 2))
-        B = np.zeros((2, 1))
-
+        # within window window_size * window_size
         for index, k in enumerate(corners):
-            x, y = k
+            x = k[0]
+            y = k[1]
 
-            A[0, 0] = np.sum((Ix[y - 1:y + 2, x - 1:x + 2]) ** 2)
+            ix = dx[x - win_size: x + win_size, y - win_size: y + win_size + 1].flatten()
+            iy = dy[x - win_size: x + win_size, y - win_size: y + win_size + 1].flatten()
+            it = dt[x - win_size: x + win_size, y - win_size: y + win_size + 1].flatten()
 
-            A[1, 1] = np.sum((Iy[y - 1:y + 2, x - 1:x + 2]) ** 2)
-            A[0, 1] = np.sum(Ix[y - 1:y + 2, x - 1:x + 2] * Iy[y - 1:y + 2, x - 1:x + 2])
-            A[1, 0] = np.sum(Ix[y - 1:y + 2, x - 1:x + 2] * Iy[y - 1:y + 2, x - 1:x + 2])
-            Ainv = np.linalg.pinv(A)
+            b = np.reshape(it, (it.shape[0], 1))  # get b here. Make b a column vector.
+            a = np.vstack((ix, iy)).T  # get A here. Combine ix and iy into a matrix and transpose them.
+            nu = np.matmul(np.linalg.pinv(a), b)  # get velocity here. Matrix inversion requires a square matrix but
+            # a isn't square.
+            # This is why we use pinv.
 
-            B[0, 0] = -np.sum(Ix[y - 1:y + 2, x - 1:x + 2] * It1[y - 1:y + 2, x - 1:x + 2])
-            B[1, 0] = -np.sum(Iy[y - 1:y + 2, x - 1:x + 2] * It1[y - 1:y + 2, x - 1:x + 2])
-            prod = np.matmul(Ainv, B)
-
-            u[y, x] = prod[0]
-            v[y, x] = prod[1]
-
-        u = u[u is not 0]
-        v = v[v is not 0]
+            u[index] = nu[0]
+            v[index] = nu[1]
 
         return u,v
 
@@ -63,34 +74,29 @@ class LucasKanade:
         im1_pure = im2[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x]
         im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x,
                       0]  # use the rows and the column specified
+        im2_gray = cv.cvtColor(im2, cv.COLOR_BGR2GRAY)
         im1_2d = im1[:, :, 0]
         im2_2d = im2[:, :, 0]
 
-        # parameter to get features
-        feature_params = dict(maxCorners=100,
-                              qualityLevel=0.3,
-                              minDistance=7,
-                              blockSize=7)
+        if len(self.initial_frame) == 0:
+            self.initial_frame = im1_2d
+            pt = cv.goodFeaturesToTrack(im1_corners, mask=None, **self.feature_params)
 
-        features = cv2.goodFeaturesToTrack(im1_corners, mask=None,
-                                          **feature_params)  # using opencv function to get feature for which we are plotting flow
-        feature = np.int32(features)
-        # print(feature)
-        good_corners = np.reshape(feature, newshape=[-1, 2])
+            for i in range(len(pt)):
+                pt[i][0][0] = pt[i][0][0] + rect.top_x
+                pt[i][0][1] = pt[i][0][1] + rect.top_y
 
-        # harris_result = self.harris.get_harris_value(im=im1_corners)
-        # good_corners = (self.harris.get_harris_points(harris_result))
+            self.initial_features = np.reshape(pt, (-1, 1, 2))
 
-        if isinstance(good_corners, collections.Iterable):
+         # calculate optical flow
+        p1, st, err = cv.calcOpticalFlowPyrLK(self.initial_frame, im2_2d, self.initial_features, None, **self.lk_params)
 
-            scaled_corners = [[corner[0] + rect.top_y, corner[1] + rect.top_x] for corner in good_corners]
-            u, v = self.calc_optical_flow(im1_2d, im2_2d, scaled_corners)
+        p1 = np.reshape(p1, (-1, 1, 2))
 
-            if u.any() and v.any():
-                self.u = math.floor(np.array(u).mean())
-                self.v = math.floor(np.array(v).mean())
+        good_features = p1[st == 1]   # The shape of this thing is (x,y)
 
-        u, v = self.u, self.v
-        self.u, self.v = 0, 0
-        return u, v
+        return good_features
+
+
+
 

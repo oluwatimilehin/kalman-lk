@@ -4,6 +4,7 @@ import get_points
 from collections import namedtuple
 import tracker as track
 
+
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 
@@ -34,6 +35,7 @@ def run(source):
     while True:
         # Read frame from device or file
         retval, img = cap.read()
+
         if not retval:
             print("Cannot capture frame device | CODE TERMINATING :(")
             cv2.destroyAllWindows()
@@ -44,7 +46,8 @@ def run(source):
             tracker.run()
             rect = tracker.rect
 
-            cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (255, 255, 255), 3)
+
+        cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 3)
 
         # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
 
@@ -60,5 +63,5 @@ def run(source):
 
 
 if __name__ == '__main__':
-    source = 'three-four.mp4'
+    source = 'output.mp4'
     run(source)

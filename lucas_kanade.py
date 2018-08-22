@@ -112,15 +112,15 @@ class LucasKanade:
 
          # calculate optical flow
         p1, st, err = cv.calcOpticalFlowPyrLK(im1_2d, im2_2d, self.initial_features, None, **self.lk_params)
-        new_corners = self.calc_optical_flow(im1_2d, im2_2d, self.initial_features)
+        # new_corners = self.calc_optical_flow(im1_2d, im2_2d, self.initial_features)
 
         p1 = np.reshape(p1, (-1, 1, 2))
 
         good_features = p1[st == 1]   # The shape of this thing is (x,y)
         self.initial_features = good_features
-        self.initial_corners = new_corners
+        # self.initial_corners = new_corners
 
-        return new_corners
+        return good_features
 
 
 

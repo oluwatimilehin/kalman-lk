@@ -26,7 +26,7 @@ class LucasKanade:
                               blockSize=7)
         # Parameters for lucas kanade optical flow
         self.lk_params = dict(winSize=(15, 15),
-                         maxLevel=2,
+                         maxLevel=5,
                          criteria=(cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
 
     # This is the method that implements the Lucas Kanade algorithm

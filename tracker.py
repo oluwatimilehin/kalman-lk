@@ -26,10 +26,30 @@ class Tracker:
         # self.kalman = kalman.Kalman(self.rect, self.measured)
 
     def measure(self):
-        u, v = self.lk.run(self.rect, self.im1, self.im2)
+        self.measured = self.lk.run(self.rect, self.im1, self.im2)
 
-        self.new_x = ((self.rect.top_x + self.rect.bottom_x) /2) + u
-        self.new_y = ((self.rect.top_y + self.rect.bottom_y) / 2) + v
+        x = []
+        y = []
+
+        for i, value in enumerate(self.measured):
+            x.append(value[0])
+            y.append(value[1])
+
+        x = np.array(x)
+        y = np.array(y)
+
+        x_min, x_max = np.min(x), np.max(x)
+        y_min, y_max = np.min(y), np.max(y)
+
+        top_x = math.ceil(x_min)
+        top_y = math.ceil(y_min)
+        bottom_x = math.ceil(x_max)
+        bottom_y = math.ceil(y_max)
+
+        self.rect = Rect(top_x, top_y, bottom_x, bottom_y)
+
+        self.new_x = ((self.rect.top_x + self.rect.bottom_x) /2)
+        self.new_y = ((self.rect.top_y + self.rect.bottom_y) / 2)
 
         self.measured = np.array([self.new_x, self.new_y]).T
 

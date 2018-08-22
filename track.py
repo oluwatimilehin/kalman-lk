@@ -24,8 +24,6 @@ class Tracker:
     def measure(self):
         self.measured = self.lk.run(self.rect, self.im1, self.im2)
 
-    def run(self):
-        self.measure()
         x = []
         y = []
 
@@ -45,3 +43,9 @@ class Tracker:
         bottom_y = math.ceil(y_max)
 
         self.rect = Rect(top_x, top_y, bottom_x, bottom_y)
+
+    def run(self):
+        self.measure()
+
+
+

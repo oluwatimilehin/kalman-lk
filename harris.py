@@ -30,7 +30,7 @@ class Harris:
             return Wdet - Wtr
 
     @staticmethod
-    def get_harris_points(harris_im, min_distance=2, threshold=0.02):
+    def get_harris_points(harris_im, min_distance=7, threshold=0.1):
 
             if harris_im.size == 0:
                 return "No good corners detected"

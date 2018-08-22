@@ -46,7 +46,7 @@ def run(source):
             tracker.run()
             rect = tracker.rect
 
-        cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (255, 255, 255), 3)
+        cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 3)
         # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
 
         prev_image = img

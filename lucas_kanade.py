@@ -33,16 +33,16 @@ class LucasKanade:
     def calc_optical_flow(self, im1, im2, corners: np.array, win=15):
         assert im1.shape == im2.shape
 
-        Gx = np.reshape(np.asarray([[-1, 1], [-1, 1]]), (2, 2))  # for image 1 and image 2 in x direction
-        Gy = np.reshape(np.asarray([[-1, -1], [1, 1]]), (2, 2))  # for image 1 and image 2 in y direction
-        Gt1 = np.reshape(np.asarray([[-1, -1], [-1, -1]]), (2, 2))  # for 1st image
-        Gt2 = np.reshape(np.asarray([[1, 1], [1, 1]]), (2, 2))  # for 2nd image
+        dx = np.reshape(np.asarray([[-1, 1], [-1, 1]]), (2, 2))  # for image 1 and image 2 in x direction
+        dy = np.reshape(np.asarray([[-1, -1], [1, 1]]), (2, 2))  # for image 1 and image 2 in y direction
+        dt1 = np.reshape(np.asarray([[-1, -1], [-1, -1]]), (2, 2))  # for 1st image
+        dt2 = np.reshape(np.asarray([[1, 1], [1, 1]]), (2, 2))  # for 2nd image
 
 
-        Ix = (convolve2d(im1, Gx) + convolve2d(im2, Gx)) / 2  # smoothing in x direction
+        Ix = (convolve2d(im1, dx) + convolve2d(im2, dx)) / 2  # smoothing in x direction
 
-        Iy = (convolve2d(im1, Gy) + convolve2d(im2, Gy)) / 2  # smoothing in y direction
-        It1 = convolve2d(im1, Gt1) + convolve2d(im2,Gt2)
+        Iy = (convolve2d(im1, dy) + convolve2d(im2, dy)) / 2  # smoothing in y direction
+        It1 = convolve2d(im1, dt1) + convolve2d(im2,dt2)
         # taking difference of two images using gaussian mask of all -1 and all 1
 
 

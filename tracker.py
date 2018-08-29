@@ -35,6 +35,10 @@ class Tracker:
             x.append(value[0])
             y.append(value[1])
 
+        # This section is to determine the top-most and bottom-most
+        # locations of the points being tracker to determine where
+        # to draw the rectangle
+
         x = np.array(x)
         y = np.array(y)
 

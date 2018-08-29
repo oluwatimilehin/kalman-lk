@@ -4,6 +4,7 @@ from main import Rect
 from scipy.linalg import inv
 
 
+# Check kalmane.py for current version
 class Kalman(object):
     def __init__(self, rect: Rect, measured, dt=0.1):
 

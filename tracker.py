@@ -62,6 +62,7 @@ class Tracker:
         self.measure()
         self.kalman.update(self.measured)
 
+        # This section is used to determine the position of the rectangle from the centre point being tracked
         var_top_x = self.rect.top_x - self.new_x
         var_top_y = self.rect.top_y - self.new_y
         var_bottom_x = self.rect.bottom_x - self.new_x

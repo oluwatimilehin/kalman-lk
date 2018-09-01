@@ -61,5 +61,5 @@ def run(source):
 
 
 if __name__ == '__main__':
-    source = 'output.mp4'
+    source = 'filmrole1.avi'
     run(source)

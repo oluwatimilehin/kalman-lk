@@ -101,7 +101,7 @@ class LucasKanade:
         if len(self.initial_frame) == 0:
             self.initial_frame = im1_2d
             pt = cv.goodFeaturesToTrack(im1_corners, mask=None, **self.feature_params, useHarrisDetector=True)
-            self.initial_corners = self.harris.get_harris_points(harris_result) #Corners here are in form row,column
+            #  self.initial_corners = self.harris.get_harris_points(harris_result) #Corners here are in form row,column
 
             for i in range(len(pt)):
                 pt[i][0][0] = pt[i][0][0] + rect.top_x

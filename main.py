@@ -72,5 +72,5 @@ def run(source):
 
 
 if __name__ == '__main__':
-    source = 'filmrole1.avi'
+    source = 'dataset/filmrole1.avi'
     run(source)

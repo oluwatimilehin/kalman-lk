@@ -6,6 +6,10 @@ from collections import namedtuple
 import track
 
 
+# TODO: Add lines on the pitch to demonstrate movement
+#TODO: Update Kalman filter
+#TODO: Record the centre coordinates being tracked
+
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 def run(source):

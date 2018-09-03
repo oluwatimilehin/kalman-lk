@@ -29,8 +29,8 @@ class Tracker:
     def run(self):
         self.measure()
         rect_variance = 500
-        fgmask = self.fgbg.apply(self.im2[self.rect.top_y - rect_variance:self.rect.bottom_y + rect_variance,
-                                 self.rect.top_x - rect_variance:self.rect.bottom_x+rect_variance, 2])
+        fgmask = self.fgbg.apply(self.im2) #[self.rect.top_y - rect_variance:self.rect.bottom_y + rect_variance,
+                                 #self.rect.top_x - rect_variance:self.rect.bottom_x+rect_variance, 2])
         ret, thresh = cv2.threshold(fgmask, 127, 255, 0)
         im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -41,9 +41,10 @@ class Tracker:
         if len(contours) > 0:
             for cnt in contours:
                 x, y, w, h = cv2.boundingRect(cnt)
-                bottom_x, bottom_y = x + w, y + h
-
-                rect_coordinates.append([(x, y), (bottom_x, bottom_y)])
+                if w > 5 and h > 5:
+                    bottom_x, bottom_y = x + w, y + h
+                    if x >= best_rect[0][0] - 50 and bottom_x <= best_rect[1][0] + 100:
+                        rect_coordinates.append([(x, y), (bottom_x, bottom_y)])
 
         if len(rect_coordinates) is not 0:
             for index, cord in enumerate(rect_coordinates):
@@ -52,7 +53,7 @@ class Tracker:
 
                 count = 0
                 for point in self.measured:
-                    if top_point[0] <= point[0] <= bottom_point[0] and top_point[1] <= point[1] <=bottom_point[1]:
+                    if top_point[0] <= point[0] <= bottom_point[0] or top_point[1] <= point[1] <=bottom_point[1]:
                         count += 1
 
                 count_dict[index] = count
@@ -60,7 +61,7 @@ class Tracker:
             max_index = 0
             max_val = 0
 
-            for k, v in count_dict:
+            for k, v in count_dict.items():
                 if v > max_val:
                     max_val = v
                     max_index = k

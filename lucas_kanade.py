@@ -29,6 +29,7 @@ class LucasKanade:
                          maxLevel=2,
                          criteria=(cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
 
+
     # This is the method that implements the Lucas Kanade algorithm
     def calc_optical_flow(self, im1, im2, corners: np.array, win=15):
         assert im1.shape == im2.shape
@@ -93,30 +94,32 @@ class LucasKanade:
         im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x,
                       0]  # use the rows and the column specified
 
+
+
         im1_2d = im1[:, :, 0]
         im2_2d = im2[:, :, 0]
 
-        harris_result = self.harris.get_harris_value(im1_corners)
+        # harris_result = self.harris.get_harris_value(im1_corners)
 
         if len(self.initial_frame) == 0:
             self.initial_frame = im1_2d
             pt = cv.goodFeaturesToTrack(im1_corners, mask=None, **self.feature_params, useHarrisDetector=True)
-            self.initial_corners = self.harris.get_harris_points(harris_result) #Corners here are in form row,column
+            #  self.initial_corners = self.harris.get_harris_points(harris_result) # Corners here are in form row,column
 
             for i in range(len(pt)):
                 pt[i][0][0] = pt[i][0][0] + rect.top_x
                 pt[i][0][1] = pt[i][0][1] + rect.top_y
 
-            self.initial_features = np.reshape(pt, (-1, 1, 2))   #Get the first set of features
+            self.initial_features = np.reshape(pt, (-1, 1, 2))  # Get the first set of features
 
-
-         # calculate optical flow
+        # calculate optical flow
         p1, st, err = cv.calcOpticalFlowPyrLK(im1_2d, im2_2d, self.initial_features, None, **self.lk_params)
         # new_corners = self.calc_optical_flow(im1_2d, im2_2d, self.initial_features)
 
         p1 = np.reshape(p1, (-1, 1, 2))
 
         good_features = p1[st == 1]   # The shape of this thing is (x,y)
+
         self.initial_features = good_features
         # self.initial_corners = new_corners
 

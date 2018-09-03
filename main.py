@@ -18,6 +18,12 @@ def run(source):
             break
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)
+
+        # Continue until the user presses ESC key
+        k = cv2.waitKey(30) & 0xff
+        if k == 27:
+            cv2.destroyAllWindows()
+            break
     cv2.destroyWindow('Image')
 
     points = get_points.run(img)
@@ -31,6 +37,7 @@ def run(source):
 
     tracker = track.Tracker(rect)
     prev_image = None
+
 
     while True:
         # Read frame from device or file

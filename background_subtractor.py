@@ -29,7 +29,8 @@ class BackgroundSubtractor:
 
         return rect_coordinates
 
-    def get_best_candidate(self, rect_coordinates: list, points):
+    @staticmethod
+    def get_best_candidate(rect_coordinates: list, points):
         count_dict = {}
         for index, rect in enumerate(rect_coordinates):
 
@@ -51,4 +52,3 @@ class BackgroundSubtractor:
         best_rect = rect_coordinates[max_index]
 
         return best_rect
-

@@ -2,8 +2,13 @@ import numpy as np
 import cv2
 import get_points
 from collections import namedtuple
-import tracker as track
+import track
+import math
 
+
+#TODO: Add lines on the pitch to demonstrate movement
+#TODO: Update Kalman filter
+#TODO: Record the centre coordinates being tracked
 
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
@@ -18,6 +23,12 @@ def run(source):
             break
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)
+
+        # Continue until the user presses ESC key
+        k = cv2.waitKey(30) & 0xff
+        if k == 27:
+            cv2.destroyAllWindows()
+            break
     cv2.destroyWindow('Image')
 
     points = get_points.run(img)
@@ -31,6 +42,9 @@ def run(source):
 
     tracker = track.Tracker(rect)
     prev_image = None
+
+    centre = (0, 0)
+
 
     while True:
         # Read frame from device or file
@@ -46,10 +60,18 @@ def run(source):
             tracker.run()
             rect = tracker.rect
 
+        pt1 = (rect.top_x, rect.top_y)
+        pt2 = (rect.bottom_x, rect.bottom_y)
+        mean_x = math.floor((rect.top_x + rect.bottom_x)/2)
+        mean_y = math.floor((rect.top_y + rect.bottom_y) / 2)
 
-        cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 8)
+        old_center = centre
+        centre = (mean_x, rect.bottom_y)
 
-        # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
+        cv2.line(img, old_center, centre, (0, 0, 0))
+        cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 3)
+        print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
+
 
         prev_image = img
 
@@ -63,5 +85,5 @@ def run(source):
 
 
 if __name__ == '__main__':
-    source = 'filmrole1.avi'
+    source = 'dataset/filmrole1.avi'
     run(source)

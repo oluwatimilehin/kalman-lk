@@ -4,9 +4,9 @@ import get_points
 import lucas_kanade
 from collections import namedtuple
 import track
+import math
 
-
-# TODO: Add lines on the pitch to demonstrate movement
+#TODO: Add lines on the pitch to demonstrate movement
 #TODO: Update Kalman filter
 #TODO: Record the centre coordinates being tracked
 
@@ -42,6 +42,8 @@ def run(source):
     tracker = track.Tracker(rect)
     prev_image = None
 
+    centre = (0, 0)
+
 
     while True:
         # Read frame from device or file
@@ -57,8 +59,17 @@ def run(source):
             tracker.run()
             rect = tracker.rect
 
+        pt1 = (rect.top_x, rect.top_y)
+        pt2 = (rect.bottom_x, rect.bottom_y)
+        mean_x = math.floor((rect.top_x + rect.bottom_x)/2)
+        mean_y = math.floor((rect.top_y + rect.bottom_y) / 2)
+
+        old_center = centre
+        centre = (mean_x, rect.bottom_y)
+
+        cv2.line(img, old_center, centre, (0, 0, 0))
         cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 3)
-        # print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
+        print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
 
         prev_image = img
 

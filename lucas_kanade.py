@@ -22,8 +22,8 @@ class LucasKanade:
         # params for ShiTomasi corner detection
         self.feature_params = dict(maxCorners=100,
                               qualityLevel=0.3,
-                              minDistance=7,
-                              blockSize=7)
+                              minDistance=3,
+                              blockSize=15)
         # Parameters for lucas kanade optical flow
         self.lk_params = dict(winSize=(15, 15),
                          maxLevel=5,

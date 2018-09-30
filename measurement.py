@@ -9,7 +9,7 @@ import cv2
 Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 
-class Tracker:
+class Measurement:
     def __init__(self, rect):
         self.rect = rect
         self.im1 = []
@@ -19,11 +19,10 @@ class Tracker:
         self.measured = []
         self.fgbg = cv2.createBackgroundSubtractorMOG2()
 
-    def update(self, im1, im2, rect):
-        self.rect = rect
+    def update(self, im1, im2, measured_rect):
+        self.rect = measured_rect
         self.im1 = im1
         self.im2 = im2
-        self.measure()
 
     def measure(self):
         self.measured = self.lk.run(self.rect, self.im1, self.im2)

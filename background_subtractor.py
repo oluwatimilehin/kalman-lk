@@ -24,8 +24,8 @@ class BackgroundSubtractor:
                 x, y, w, h = cv2.boundingRect(cnt)
                 if w > 5 and h > 5:
                     bottom_x, bottom_y = x + w, y + h
-                    if x >= rect.top_x - 50 and bottom_x <= rect.bottom_x + 100:
-                        rect_coordinates.append(Rect(x,y,bottom_x,bottom_y))
+                    if x >= rect.top_x - 50 and bottom_x <= rect.bottom_x + 50:
+                            rect_coordinates.append(Rect(x, y, bottom_x, bottom_y))
 
         return rect_coordinates
 

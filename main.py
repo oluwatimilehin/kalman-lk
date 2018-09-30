@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import get_points
 from collections import namedtuple
-import track
+import tracker as track
 import math
 
 
@@ -33,6 +33,7 @@ def run(source):
 
     points = get_points.run(img)
     rect = Rect(points[0][0], points[0][1], points[0][2], points[0][3])
+    measured_rect = rect
     if not points:
         print("ERROR: No object to be tracked.")
         exit()
@@ -56,9 +57,10 @@ def run(source):
             break
 
         if prev_image is not None:
-            tracker.update(prev_image, img, rect)
+            tracker.update_params(prev_image, img, rect, measured_rect)
             tracker.run()
             rect = tracker.rect
+            measured_rect = tracker.measured_rect
 
         pt1 = (rect.top_x, rect.top_y)
         pt2 = (rect.bottom_x, rect.bottom_y)

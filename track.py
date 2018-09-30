@@ -29,7 +29,9 @@ class Tracker:
         self.measured = self.lk.run(self.rect, self.im1, self.im2)
 
     def run(self):
+
         self.measure()
+        self.bgsubtractor.run(self.im2)
 
         x = []
         y = []
@@ -45,11 +47,15 @@ class Tracker:
         y_min, y_max = np.min(y), np.max(y)
 
         top_x = math.ceil(x_min)
-        top_y = math.ceil(y_min)
-        bottom_x = math.ceil(x_max)
         bottom_y = math.ceil(y_max)
+        bottom_x = math.ceil(x_max)
+        top_y = math.ceil(y_min)
 
-        self.bgsubtractor.run(self.im2)
+        # if bottom_y - top_y < 70:
+        #     bottom_y += 30
+        #
+        # if bottom_x - top_x < 30:
+        #     bottom_x += 15
 
         if len(self.bgsubtractor.contours) > 0:
             rect_coordinates = self.bgsubtractor.get_suitable_rectangles(self.rect)

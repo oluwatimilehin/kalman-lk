@@ -27,7 +27,7 @@ class Tracker:
 
     def measure(self):
         self.measurement.run()
-
+        self.rect = self.measurement.rect
         self.measured_rect = self.measurement.rect
         self.new_x = math.floor((self.rect.top_x + self.rect.bottom_x) / 2)
         self.new_y = math.floor((self.rect.top_y + self.rect.bottom_y) / 2)
@@ -47,6 +47,7 @@ class Tracker:
 
         if self.measured_rect.top_x <= self.kalman.player_f.x[0] <= self.measured_rect.bottom_x:
             if self.measured_rect.top_y <= self.kalman.player_f.x[2] <= self.measured_rect.bottom_y:
+                print("Use bounding")
                 return
 
         top_x = math.floor(self.kalman.player_f.x[0] + var_top_x)
@@ -54,4 +55,5 @@ class Tracker:
         bottom_x = math.floor(self.kalman.player_f.x[0] + var_bottom_x)
         bottom_y = math.floor(self.kalman.player_f.x[2] + var_bottom_y)
 
+        print("Not bounding")
         self.rect = Rect(top_x, top_y, bottom_x, bottom_y)

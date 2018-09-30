@@ -9,6 +9,12 @@ def run(img):
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
     cv2.imshow(window_name, img_copy)
 
+    # Continue until the user presses ESC key
+    k = cv2.waitKey(30) & 0xff
+    if k == 27:
+        cv2.destroyAllWindows()
+        return
+
     run.mouse_down = False
     points_1 = []
     points_2 = []
@@ -39,6 +45,11 @@ def run(img):
         cv2.namedWindow(window_name_2, cv2.WINDOW_NORMAL)
         cv2.imshow(window_name_2, im_disp)
         key = cv2.waitKey(30)
+        k = cv2.waitKey(30) & 0xff
+        if k == 27:
+            cv2.destroyAllWindows()
+            return
+
         if key == ord('p'):
             # Press key `s` to return the selected points
             cv2.destroyAllWindows()
@@ -52,6 +63,7 @@ def run(img):
             # Press key `q` to quit the program
             print("Quitting without saving.")
             cv2.destroyAllWindows()
+            # Continue until the user presses ESC key
         elif key == ord('d'):
             # Press ket `d` to delete the last rectangular region
             if run.mouse_down == False and points_1:

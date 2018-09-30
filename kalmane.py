@@ -20,7 +20,7 @@ class Kalman_E(object):
         self.player_f.H = np.array([[1, 0, 0, 0],
                            [0, 0, 1, 0]])
 
-        self.player_f.Q = Q_discrete_white_noise(dim=4, dt=0.0, var=300)
+        self.player_f.Q = Q_discrete_white_noise(dim=4, dt=1, var=40)
         self.s = Saver(self.player_f)
 
     def predict(self):

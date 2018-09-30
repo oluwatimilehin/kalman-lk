@@ -82,6 +82,7 @@ def run(source):
         # Continue until the user presses ESC key
         k = cv2.waitKey(30) & 0xff
         if k == 27:
+            print(tracker.kalman.s['mahalanobis'])
             cv2.destroyAllWindows()
             break
 

@@ -22,7 +22,7 @@ class BackgroundSubtractor:
             suitable_contours = [cnt for cnt in self.contours if len(cnt) > 0] # This is to reduce computation time
             for cnt in suitable_contours:
                 x, y, w, h = cv2.boundingRect(cnt)
-                if w > 2 and h > 2:
+                if w > 5 and h > 5:
                     bottom_x, bottom_y = x + w, y + h
                     if x >= rect.top_x - 50 and bottom_x <= rect.bottom_x + 50:
                         if y >= rect.top_y - 50 and bottom_y <= rect.bottom_y + 50:

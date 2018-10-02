@@ -7,7 +7,7 @@ Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 class BackgroundSubtractor:
     def __init__(self):
-        self.fgbg = cv2.createBackgroundSubtractorMOG2()
+        self.fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
         self.contours = []
 
     def run(self, im):

@@ -80,8 +80,10 @@ def run(source):
         if k == 27:
             cv2.destroyAllWindows()
             break
+    print(tracker.max_x)
+    print(tracker.max_y)
 
 
 if __name__ == '__main__':
-    source = 'dataset/filmrole6.avi'
+    source = 'dataset/filmrole1.avi'
     run(source)

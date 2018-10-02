@@ -7,7 +7,8 @@ Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 class BackgroundSubtractor:
     def __init__(self):
-        self.fgbg = cv2.createBackgroundSubtractorMOG2()
+        self.fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
+
         self.contours = []
 
     def run(self, im):
@@ -22,10 +23,10 @@ class BackgroundSubtractor:
             suitable_contours = [cnt for cnt in self.contours if len(cnt) > 0] # This is to reduce computation time
             for cnt in suitable_contours:
                 x, y, w, h = cv2.boundingRect(cnt)
-                if w > 2 and h > 2:
+                if w > 5 and h > 5:
                     bottom_x, bottom_y = x + w, y + h
-                    if x >= rect.top_x - 50 and bottom_x <= rect.bottom_x + 50:
-                        if y >= rect.top_y - 50 and bottom_y <= rect.bottom_y + 50:
+                    if x >= rect.top_x - 90 and bottom_x <= rect.bottom_x + 90:
+                        if y >= rect.top_y - 90 and bottom_y <= rect.bottom_y + 90:
                             rect_coordinates.append(Rect(x,y,bottom_x,bottom_y))
 
         return rect_coordinates

@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
-cap = cv2.VideoCapture('filmrole1.avi')
-fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
+cap = cv2.VideoCapture('dataset/filmrole1.avi')
+fgbg = cv2.createBackgroundSubtractorMOG2() # cv2.bgsegm.createBackgroundSubtractorMOG()
+
 while(1):
     ret, frame = cap.read()
     # frame = frame[1:600, 3:400,2]

@@ -23,7 +23,7 @@ class LucasKanade:
         self.feature_params = dict(maxCorners=100,
                               qualityLevel=0.3,
                               minDistance=3,
-                              blockSize=15)
+                              blockSize=7)
         # Parameters for lucas kanade optical flow
         self.lk_params = dict(winSize=(15, 15),
                          maxLevel=5,
@@ -97,8 +97,6 @@ class LucasKanade:
         im1_corners = im1[rect.top_y: rect.bottom_y, rect.top_x: rect.bottom_x,
                       0]  # use the rows and the column specified
 
-
-
         im1_2d = im1[:, :, 0]
         im2_2d = im2[:, :, 0]
 
@@ -119,13 +117,16 @@ class LucasKanade:
         p1, st, err = cv.calcOpticalFlowPyrLK(im1_2d, im2_2d, self.initial_features, None, **self.lk_params)
         # new_corners = self.calc_optical_flow(im1_2d, im2_2d, self.initial_features)
 
-        p1 = np.reshape(p1, (-1, 1, 2))
+        if not p1.size == 1:
+            p1 = np.reshape(p1, (-1, 1, 2))
 
-        good_features = p1[st == 1]   # The shape of this thing is (x,y)
+            good_features = p1[st == 1]   # The shape of this thing is (x,y)
 
-        self.initial_features = good_features
+            self.initial_features = good_features
         # self.initial_corners = new_corners
 
-        return good_features
+            return good_features
+
+        return self.initial_features
 
 

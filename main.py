@@ -4,6 +4,7 @@ import get_points
 from collections import namedtuple
 import tracker as track
 import math
+import time
 
 
 #TODO: Add lines on the pitch to demonstrate movement
@@ -19,7 +20,7 @@ def run(source):
     print("Press 'p' to pause the video and start tracking")
     while True:
         ret, img = cap.read()
-        if cv2.waitKey(10) == ord('p'):
+        if cv2.waitKey(10) == ord('p') & 0xFF:
             break
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)
@@ -44,6 +45,8 @@ def run(source):
     tracker = track.Tracker(rect)
     prev_image = None
 
+    time_elapsed = []
+
     centre = (0, 0)
 
 
@@ -58,7 +61,10 @@ def run(source):
 
         if prev_image is not None:
             tracker.update_params(prev_image, img, rect, measured_rect)
+            start = time.time()
             tracker.run()
+            end = time.time()
+            time_elapsed.append(end-start)
             rect = tracker.rect
             measured_rect = tracker.measured_rect
 
@@ -82,6 +88,8 @@ def run(source):
         # Continue until the user presses ESC key
         k = cv2.waitKey(30) & 0xff
         if k == 27:
+            time_elapsed = np.array(time_elapsed)
+            print(np.mean(time_elapsed))
             print(tracker.kalman.s['mahalanobis'])
             cv2.destroyAllWindows()
             break

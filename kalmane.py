@@ -15,12 +15,12 @@ class Kalman_E(object):
                                [0, 1, 0, 0],
                                [0, 0, 1, dt],
                                [0, 0, 0, 1]])
-        self.player_f.P = np.diag([0.001, 0.001, 0.001, 0.001])
-        self.player_f.R = np.diag([0.05, 0.05])
+        self.player_f.P = np.diag([0.5, 0.5, 0.5, 0.5])
+        self.player_f.R = np.diag([50, 50])
         self.player_f.H = np.array([[1, 0, 0, 0],
                            [0, 0, 1, 0]])
 
-        self.player_f.Q = Q_discrete_white_noise(dim=4, dt=1, var=40)
+        self.player_f.Q = Q_discrete_white_noise(dim=4, dt=1, var=900)
         self.s = Saver(self.player_f)
 
     def predict(self):

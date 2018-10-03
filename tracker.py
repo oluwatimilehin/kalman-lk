@@ -56,4 +56,4 @@ class Tracker:
         bottom_y = math.floor(self.kalman.player_f.x[2] + var_bottom_y)
 
         print("Not bounding")
-        self.rect = self.measured_rect #Rect(top_x, top_y, bottom_x, bottom_y)
+        self.rect = Rect(top_x, top_y, bottom_x, bottom_y)

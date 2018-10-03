@@ -10,46 +10,47 @@ Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 
 class Measurement:
-    Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
-    class Tracker:
-        def __init__(self, rect):
-            self.rect = rect
-            self.im1 = []
-            self.im2 = []
-            self.lk = lucas_kanade.LucasKanade()
-            self.bgsubtractor = background_subtractor.BackgroundSubtractor()
-            self.measured = []
-            self.fgbg = cv2.createBackgroundSubtractorMOG2()
-            self.old_rect = rect
-            self.max_x = 0
-            self.max_y = 0
+    def __init__(self, rect):
+        self.rect = rect
+        self.im1 = []
+        self.im2 = []
+        self.lk = lucas_kanade.LucasKanade()
+        self.bgsubtractor = background_subtractor.BackgroundSubtractor()
+        self.measured = []
+        self.fgbg = cv2.createBackgroundSubtractorMOG2()
+        self.old_rect = rect
+        self.max_x = 0
+        self.max_y = 0
 
-        def update(self, im1, im2, rect):
-            self.rect = rect
-            self.im1 = im1
-            self.im2 = im2
+    def update(self, im1, im2, rect):
+        self.rect = rect
+        self.im1 = im1
+        self.im2 = im2
 
-            self.measure()
+        self.measure()
 
-        def measure(self):
-            self.measured = self.lk.run(self.rect, self.im1, self.im2)
+    def measure(self):
+        self.measured = self.lk.run(self.rect, self.im1, self.im2)
 
-        def run(self):
+    def run(self):
 
-            self.measure()
-            self.bgsubtractor.run(self.im2)
+        self.measure()
+        self.bgsubtractor.run(self.im2)
 
-            x = []
-            y = []
+        x = []
+        y = []
 
-            for i, value in enumerate(self.measured):
-                x.append(value[0])
-                y.append(value[1])
+        for i, value in enumerate(self.measured):
+            x.append(value[0])
+            y.append(value[1])
 
-            x = np.array(x)
-            y = np.array(y)
+        x = np.array(x)
+        y = np.array(y)
 
+        temp_rect = self.rect
+
+        if x.size is not 0 and y.size is not 0:
             x_min, x_max = np.min(x), np.max(x)
             y_min, y_max = np.min(y), np.max(y)
 
@@ -58,49 +59,49 @@ class Measurement:
             bottom_x = math.ceil(x_max)
             top_y = math.ceil(y_min)
 
-            if len(self.bgsubtractor.contours) > 0:
-                rect_coordinates = self.bgsubtractor.get_suitable_rectangles(self.rect)
+            temp_rect = Rect(top_x - 20, top_y - 30, bottom_x + 20, bottom_y - 20)
 
-                if len(rect_coordinates) > 0:
-                    self.rect = self.bgsubtractor.get_best_candidate(rect_coordinates, self.measured)
-                    rect = self.rect
+        if len(self.bgsubtractor.contours) > 0:
+            rect_coordinates = self.bgsubtractor.get_suitable_rectangles(self.rect)
 
-                    if self.rect.bottom_x - self.rect.top_x > self.max_x:
-                        self.max_x = self.rect.bottom_x - self.rect.top_x
+            if len(rect_coordinates) > 0:
+                self.rect = self.bgsubtractor.get_best_candidate(rect_coordinates, self.measured)
+                rect = self.rect
 
-                    if self.rect.bottom_y - self.rect.top_y > self.max_y:
-                        self.max_y = self.rect.bottom_y - self.rect.top_y
+                if self.rect.bottom_x - self.rect.top_x > self.max_x:
+                    self.max_x = self.rect.bottom_x - self.rect.top_x
 
-                    if rect.bottom_x - rect.top_x > 80 or rect.bottom_y - rect.top_y > 140:
-                        print("Occlusion detected")
-                        self.match_template()
+                if self.rect.bottom_y - self.rect.top_y > self.max_y:
+                    self.max_y = self.rect.bottom_y - self.rect.top_y
 
-            else:
-                self.rect = Rect(top_x - 20, top_y - 30, bottom_x + 20, bottom_y - 20)
+                if rect.bottom_x - rect.top_x > 80 or rect.bottom_y - rect.top_y > 140:
+                    print("Occlusion detected")
+                    self.match_template()
 
-            self.old_rect = self.rect
+        else:
+            self.rect = temp_rect
 
-        def match_template(self):
-            im1_2d = self.im1[:, :, 0]
-            im2_2d = self.im2[:, :, 0]
-            template = im1_2d[self.old_rect.top_y: self.old_rect.bottom_y, self.old_rect.top_x: self.old_rect.bottom_x]
-            w, h = template.shape[::-1]
+        self.old_rect = self.rect
 
-            var = 50
+    def match_template(self):
+        im1_2d = self.im1[:, :, 0]
+        im2_2d = self.im2[:, :, 0]
+        template = im1_2d[self.old_rect.top_y: self.old_rect.bottom_y, self.old_rect.top_x: self.old_rect.bottom_x]
+        w, h = template.shape[::-1]
 
-            res = cv2.matchTemplate(
-                im2_2d[self.rect.top_y - var: self.rect.bottom_y + var, self.rect.top_x - var:self.rect.bottom_x + var],
-                template, cv2.TM_CCOEFF_NORMED)
-            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        var = 50
 
-            top_left = max_loc
-            x = top_left[0] + self.rect.top_x - var
-            y = top_left[1] + self.rect.top_y - var
+        res = cv2.matchTemplate(
+            im2_2d[self.rect.top_y - var: self.rect.bottom_y + var, self.rect.top_x - var:self.rect.bottom_x + var],
+            template, cv2.TM_CCOEFF_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
-            top_left = (x, y)
+        top_left = max_loc
+        x = top_left[0] + self.rect.top_x - var
+        y = top_left[1] + self.rect.top_y - var
 
-            bottom_right = (x + w, y + h)
+        top_left = (x, y)
 
-            self.rect = Rect(top_left[0], top_left[1], bottom_right[0], bottom_right[1])
+        bottom_right = (x + w, y + h)
 
-
+        self.rect = Rect(top_left[0], top_left[1], bottom_right[0], bottom_right[1])

@@ -15,8 +15,8 @@ class Kalman_E(object):
                                [0, 1, 0, 0],
                                [0, 0, 1, dt],
                                [0, 0, 0, 1]])
-        self.player_f.P = np.diag([0.5, 0.5, 0.5, 0.5])
-        self.player_f.R = np.diag([50, 50])
+        self.player_f.P = np.diag([0.0001, 0.0001, 0.0001, 0.0001])
+        self.player_f.R = np.diag([25, 25])
         self.player_f.H = np.array([[1, 0, 0, 0],
                            [0, 0, 1, 0]])
 

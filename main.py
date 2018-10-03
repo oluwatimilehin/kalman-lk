@@ -74,7 +74,7 @@ def run(source):
         mean_y = math.floor((rect.top_y + rect.bottom_y) / 2)
 
         old_center = centre
-        centre = (mean_x, rect.bottom_y)
+        centre = (mean_x, mean_y)
 
         cv2.line(img, old_center, centre, (0, 0, 0))
         cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 3)

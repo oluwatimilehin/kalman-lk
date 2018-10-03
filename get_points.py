@@ -50,7 +50,7 @@ def run(img):
             cv2.destroyAllWindows()
             return
 
-        if key == ord('p'):
+        if k == ord('p'):
             # Press key `s` to return the selected points
             cv2.destroyAllWindows()
 
@@ -59,12 +59,12 @@ def run(img):
             point = [(tl + br) for tl, br in zip(points_1, points_2)]
             # corrected_point = check_point(point)
             return point
-        elif key == ord('q'):
+        elif k == ord('q'):
             # Press key `q` to quit the program
             print("Quitting without saving.")
             cv2.destroyAllWindows()
             # Continue until the user presses ESC key
-        elif key == ord('d'):
+        elif k == ord('d'):
             # Press ket `d` to delete the last rectangular region
             if run.mouse_down == False and points_1:
                 print("Object deleted at  [{}, {}]".format(points_1[-1], points_2[-1]))

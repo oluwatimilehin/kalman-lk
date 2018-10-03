@@ -48,7 +48,7 @@ def run(source):
     time_elapsed = []
 
     centre = (0, 0)
-
+    count = 0
 
     while True:
         # Read frame from device or file
@@ -58,6 +58,8 @@ def run(source):
             print("Cannot capture frame device | CODE TERMINATING :(")
             cv2.destroyAllWindows()
             break
+
+        count += 1
 
         if prev_image is not None:
             tracker.update_params(prev_image, img, rect, measured_rect)
@@ -91,6 +93,7 @@ def run(source):
             time_elapsed = np.array(time_elapsed)
             print(np.mean(time_elapsed))
             print(tracker.kalman.s['mahalanobis'])
+            print(count)
             cv2.destroyAllWindows()
             break
 

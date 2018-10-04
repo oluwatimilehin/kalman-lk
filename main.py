@@ -22,7 +22,7 @@ def run(source):
     while True:
         ret, img = cap.read()
         count += 1
-        if cv2.waitKey(10) == ord('p') & 0xFF:
+        if cv2.waitKey(10) == ord('p'):
             break
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)

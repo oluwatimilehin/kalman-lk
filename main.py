@@ -18,6 +18,8 @@ def run(source):
     cap = cv2.VideoCapture(source)
     count = 0
 
+    f = open('dataset/hybrid_0.txt', 'w')
+
     print("Press 'p' to pause the video and start tracking")
     while True:
         ret, img = cap.read()
@@ -81,8 +83,8 @@ def run(source):
 
         cv2.line(img, old_center, centre, (0, 0, 0))
         cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 3)
-        print("Frame" + str(count) + ":Object tracked at [{}, {}] \r".format(pt1, pt2), )\
-
+        print("Frame" + str(count) + ":Object tracked at [{}, {}] \r".format(pt1, pt2), )
+        f.write(str(count) + "," + str(pt1[0]) + "," + str(pt1[1]) + "," + str(pt2[0]) + "," + str(pt2[1]) + "\n")
 
         prev_image = img
 
@@ -94,6 +96,7 @@ def run(source):
             time_elapsed = np.array(time_elapsed)
             print(np.mean(time_elapsed))
             print(tracker.kalman.s['mahalanobis'])
+            f.close()
             print(count)
             cv2.destroyAllWindows()
             break

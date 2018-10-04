@@ -16,10 +16,12 @@ Rect = namedtuple('Rectangle', 'top_x top_y bottom_x bottom_y')
 
 def run(source):
     cap = cv2.VideoCapture(source)
+    count = 0
 
     print("Press 'p' to pause the video and start tracking")
     while True:
         ret, img = cap.read()
+        count += 1
         if cv2.waitKey(10) == ord('p') & 0xFF:
             break
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
@@ -48,7 +50,6 @@ def run(source):
     time_elapsed = []
 
     centre = (0, 0)
-    count = 0
 
     while True:
         # Read frame from device or file
@@ -80,7 +81,7 @@ def run(source):
 
         cv2.line(img, old_center, centre, (0, 0, 0))
         cv2.rectangle(img, (rect.top_x, rect.top_y), (rect.bottom_x, rect.bottom_y), (0, 0, 255), 3)
-        print("Object tracked at [{}, {}] \r".format(pt1, pt2), )\
+        print("Frame" + str(count) + ":Object tracked at [{}, {}] \r".format(pt1, pt2), )\
 
 
         prev_image = img

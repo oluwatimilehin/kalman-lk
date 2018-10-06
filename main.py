@@ -23,11 +23,6 @@ def run(source):
         cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", img)
 
-        # Continue until the user presses ESC key
-        k = cv2.waitKey(30) & 0xff
-        if k == 27:
-            cv2.destroyAllWindows()
-            break
     cv2.destroyWindow('Image')
 
     points = get_points.run(img)
@@ -85,5 +80,5 @@ def run(source):
 
 
 if __name__ == '__main__':
-    source = 'dataset/filmrole1.avi'
+    source = 'dataset/filmrole2.avi'
     run(source)

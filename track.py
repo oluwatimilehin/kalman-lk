@@ -55,6 +55,8 @@ class Tracker:
         bottom_x = math.ceil(x_max)
         top_y = math.ceil(y_min)
 
+        self.rect = Rect(top_x, top_y, bottom_x, bottom_y)
+
         if len(self.bgsubtractor.contours) > 0:
             rect_coordinates = self.bgsubtractor.get_suitable_rectangles(self.rect)
 
@@ -73,7 +75,8 @@ class Tracker:
                     self.match_template()
 
         else:
-            self.rect = Rect(top_x - 20, top_y - 30, bottom_x + 20, bottom_y -20)
+            print("Use LK")
+            self.rect = Rect(top_x, top_y, bottom_x, bottom_y)
 
         self.old_rect = self.rect
 

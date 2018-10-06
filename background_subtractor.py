@@ -17,17 +17,27 @@ class BackgroundSubtractor:
         ret, thresh = cv2.threshold(fgmask, 127, 255, 0)
         im2, self.contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+
+
     def get_suitable_rectangles(self, rect: Rect):
         rect_coordinates = []
         if len(self.contours) > 0:
             suitable_contours = [cnt for cnt in self.contours if len(cnt) > 0] # This is to reduce computation time
+            #
+            # rects = []
+            # for i in self.contours:
+            #     curr_rect = cv2.boundingRect(i)
+            #
+            #     bottom_x, bottom_y=curr_rect[0] + curr_rect[2], curr_rect[1] + curr_rect[3]
+            #     rects.append([curr_rect[0], curr_rect[1], bottom_x, bottom_y])
+
             for cnt in suitable_contours:
                 x, y, w, h = cv2.boundingRect(cnt)
                 if w > 5 and h > 5:
                     bottom_x, bottom_y = x + w, y + h
-                    if x >= rect.top_x - 90 and bottom_x <= rect.bottom_x + 90:
-                        if y >= rect.top_y - 90 and bottom_y <= rect.bottom_y + 90:
-                            rect_coordinates.append(Rect(x,y,bottom_x,bottom_y))
+                    if rect.top_x >= x - 30 and rect.bottom_x <= bottom_x + 10:
+                        if rect.top_y >= y - 40 and rect.bottom_y <= bottom_y + 10:
+                            rect_coordinates.append(Rect(x, y,bottom_x,bottom_y))
 
         return rect_coordinates
 

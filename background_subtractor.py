@@ -25,22 +25,24 @@ class BackgroundSubtractor:
         if len(self.contours) > 0:
             suitable_contours = [cnt for cnt in self.contours if len(cnt) > 0] # This is to reduce computation time
 
-            rects = []
-            for i in self.contours:
-                curr_rect = cv2.boundingRect(i)
-
-                bottom_x, bottom_y=curr_rect[0] + curr_rect[2], curr_rect[1] + curr_rect[3]
-                rects.append([curr_rect[0], curr_rect[1], bottom_x, bottom_y])
+            centre_x = (rect.top_x + rect.bottom_x) / 2
+            centre_y = (rect.top_y + rect.bottom_y) / 2
 
             for cnt in suitable_contours:
                 x, y, w, h = cv2.boundingRect(cnt)
-                if w > 10 and h > 10:
+                if w > 5 and h > 5:
                     bottom_x, bottom_y = x + w, y + h
-                    if (rect.top_x >= x and rect.bottom_x <= bottom_x) or \
-                            (rect.top_y >= y and rect.bottom_y <= bottom_y) or \
-                            (x >= rect.top_x and bottom_x <= rect.bottom_x) or \
-                            (y >= rect.top_x and bottom_y < rect.bottom_y):
-                            rect_coordinates.append(Rect(x, y,bottom_x,bottom_y))
+
+                    curr_x = (x + bottom_x) / 2
+                    curr_y = (y + bottom_y) / 2
+
+                    euc_x = math.pow((centre_x - curr_x), 2)
+                    euc_y = math.pow((centre_y - curr_y), 2)
+
+                    euc_dist = math.sqrt(euc_x + euc_y)
+
+                    if euc_dist <= 30:
+                        rect_coordinates.append(Rect(x, y, bottom_x, bottom_y))
 
         return rect_coordinates
 
@@ -71,3 +73,5 @@ class BackgroundSubtractor:
         #     print("Why")
 
         return best_rect
+
+

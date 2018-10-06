@@ -55,7 +55,7 @@ class Tracker:
         bottom_x = math.ceil(x_max)
         top_y = math.ceil(y_min)
 
-        self.rect = Rect(top_x, top_y, bottom_x, bottom_y)
+        temp_rect = Rect(top_x, top_y, bottom_x, bottom_y)
 
         if len(self.bgsubtractor.contours) > 0:
             rect_coordinates = self.bgsubtractor.get_suitable_rectangles(self.rect)
@@ -74,7 +74,8 @@ class Tracker:
                     print("Occlusion detected")
                     self.match_template()
             else:
-                print("Use previous")
+                 self.rect = temp_rect
+                # print("Use previous")
 
         else:
             print("Use LK")

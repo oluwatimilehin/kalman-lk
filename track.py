@@ -61,7 +61,7 @@ class Tracker:
             rect_coordinates = self.bgsubtractor.get_suitable_rectangles(self.rect)
 
             if len(rect_coordinates) > 0:
-                self.rect = self.bgsubtractor.get_best_candidate(rect_coordinates, self.measured)
+                self.rect = self.bgsubtractor.get_best_candidate(rect_coordinates, self.measured, self.rect)
                 rect = self.rect
 
                 if self.rect.bottom_x - self.rect.top_x > self.max_x:
@@ -73,6 +73,8 @@ class Tracker:
                 if rect.bottom_x - rect.top_x > 80 or rect.bottom_y - rect.top_y > 140:
                     print("Occlusion detected")
                     self.match_template()
+            else:
+                print("Use previous")
 
         else:
             print("Use LK")
